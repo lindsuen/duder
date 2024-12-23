@@ -18,7 +18,7 @@ type ServerConfig struct {
 }
 
 func (s *ServerConfig) InitServerConfig() {
-	s.ServerAddress = "127.0.0.1"
+	s.ServerAddress = "0.0.0.0"
 	s.ServerPort = "5363"
 }
 
