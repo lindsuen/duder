@@ -17,7 +17,7 @@ type ServerConfig struct {
 	ServerPort    string
 }
 
-func (s *ServerConfig) NewServerConfig() {
+func (s *ServerConfig) InitServerConfig() {
 	s.ServerAddress = "127.0.0.1"
 	s.ServerPort = "5363"
 }
@@ -29,15 +29,15 @@ var (
 
 // ParseIni parses the config.ini file.
 func ParseIni(file string) *ServerConfig {
-	cfg := new(ServerConfig)
-	cfg.NewServerConfig()
+	serverConfig := new(ServerConfig)
+	serverConfig.InitServerConfig()
 	config, err = ini.Load(file)
 	if err != nil {
 		log.Fatalln("Fail to read the config file: ", err)
 	}
-	cfg.ServerAddress = parseSessionKey("server", "address")
-	cfg.ServerPort = parseSessionKey("server", "port")
-	return cfg
+	serverConfig.ServerAddress = parseSessionKey("server", "address")
+	serverConfig.ServerPort = parseSessionKey("server", "port")
+	return serverConfig
 }
 
 func parseSessionKey(s string, k string) string {
