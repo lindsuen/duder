@@ -7,6 +7,8 @@
 package server
 
 import (
+	"github.com/lindsuen/manku/server/middleware/log"
+
 	"github.com/labstack/echo/v4"
 	"github.com/lindsuen/manku/internal/config"
 	"github.com/lindsuen/manku/server/route"
@@ -19,15 +21,17 @@ type MankuServer struct {
 
 func NewMankuServer() *MankuServer {
 	c := config.ParseIni("config/config.ini")
-	s := new(MankuServer)
-	s.MankuServerInstance = echo.New()
-	s.MankuListenAddress = c.ServerAddress + ":" + c.ServerPort
-	return s
+	server := new(MankuServer)
+	server.MankuServerInstance = echo.New()
+	server.MankuListenAddress = c.ServerAddress + ":" + c.ServerPort
+	return server
 }
 
 func ServerStart() {
 	mankuServer := NewMankuServer()
-	e := mankuServer.MankuServerInstance
-	route.LoadEchoRoute(e)
-	e.Logger.Fatal(e.Start(mankuServer.MankuListenAddress))
+	inst := mankuServer.MankuServerInstance
+	addr := mankuServer.MankuListenAddress
+	route.LoadEchoRoute(inst)
+	log.Logger(inst)
+	inst.Logger.Fatal(inst.Start(addr))
 }
