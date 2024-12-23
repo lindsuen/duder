@@ -7,15 +7,9 @@
 package main
 
 import (
-	"net/http"
-
-	"github.com/labstack/echo/v4"
+	"github.com/lindsuen/manku/server"
 )
 
 func main() {
-	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "manku")
-	})
-	e.Logger.Fatal(e.Start(":5363"))
+	server.ServerStart()
 }
