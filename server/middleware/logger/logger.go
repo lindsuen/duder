@@ -1,10 +1,10 @@
-// manku - log.go
+// manku - logger.go
 // Copyright (C) 2024 LindSuen <lindsuen@foxmail.com>
 //
 // Use of this source code is governed by a BSD 2-Clause license that can be
 // found in the LICENSE file.
 
-package log
+package logger
 
 import (
 	"github.com/labstack/echo/v4"
@@ -12,7 +12,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func Logger(e *echo.Echo) {
+// LoadLogger can load logger of Echo.
+func LoadLogger(e *echo.Echo) {
 	log := logrus.New()
 	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		LogURI:    true,

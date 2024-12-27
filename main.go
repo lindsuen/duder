@@ -7,9 +7,15 @@
 package main
 
 import (
+	"log"
+
 	"github.com/lindsuen/manku/server"
 )
 
+// It's the startup portal for Manku server.
 func main() {
-	server.ServerStart()
+	err := server.ServerStart()
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

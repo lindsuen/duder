@@ -7,8 +7,6 @@
 package config
 
 import (
-	"log"
-
 	"github.com/go-ini/ini"
 )
 
@@ -18,7 +16,9 @@ type ServerConfig struct {
 }
 
 func (s *ServerConfig) InitServerConfig() {
+	// Manku's default listening address is 0.0.0.0.
 	s.ServerAddress = "0.0.0.0"
+	// Manku's default listening port is 5363.
 	s.ServerPort = "5363"
 }
 
@@ -27,17 +27,17 @@ var (
 	err    error
 )
 
-// ParseIni parses the config.ini file.
-func ParseIni(file string) *ServerConfig {
+// ParseIni parses the config.ini file. The parameter fpath is the relative path to config.ini.
+func ParseIni(fpath string) (*ServerConfig, error) {
 	serverConfig := new(ServerConfig)
 	serverConfig.InitServerConfig()
-	config, err = ini.Load(file)
+	config, err = ini.Load(fpath)
 	if err != nil {
-		log.Fatalln("Fail to read the config file: ", err)
+		return nil, err
 	}
 	serverConfig.ServerAddress = parseSessionKey("server", "address")
 	serverConfig.ServerPort = parseSessionKey("server", "port")
-	return serverConfig
+	return serverConfig, nil
 }
 
 func parseSessionKey(s string, k string) string {
