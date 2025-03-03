@@ -52,7 +52,7 @@ func createDateDir(basePath string) string {
 	folderPath := fmt.Sprint(basePath + "/" + subFolderName)
 	_, err := os.Stat(folderPath)
 	if os.IsNotExist(err) {
-		os.Mkdir(folderPath, 0777)
+		os.MkdirAll(folderPath, 0777)
 		os.Chmod(folderPath, 0777)
 	}
 	return folderPath
