@@ -8,7 +8,7 @@ package server
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/lindsuen/manku/internal/config"
+	cf "github.com/lindsuen/manku/internal/config"
 	"github.com/lindsuen/manku/server/middleware/logger"
 	"github.com/lindsuen/manku/server/route"
 )
@@ -16,25 +16,22 @@ import (
 type MankuServer struct {
 	MankuServerInstance *echo.Echo
 	MankuListenAddress  string
+	MankuDataPath       string
+	MankuStoragePath    string
 }
 
-func NewMankuServer() (*MankuServer, error) {
-	conf, err := config.ParseIni("config/config.ini")
-	if err != nil {
-		return nil, err
-	}
+func NewMankuServer() *MankuServer {
 	server := new(MankuServer)
 	server.MankuServerInstance = echo.New()
-	server.MankuListenAddress = conf.ServerAddress + ":" + conf.ServerPort
-	return server, nil
+	server.MankuListenAddress = cf.Config.ServerAddress + ":" + cf.Config.ServerPort
+	server.MankuDataPath = cf.Config.ServerDataPath
+	server.MankuStoragePath = cf.Config.ServerStoragePath
+	return server
 }
 
 // ServerStart can start the Manku server.
 func ServerStart() error {
-	mankuServer, err := NewMankuServer()
-	if err != nil {
-		return err
-	}
+	mankuServer := NewMankuServer()
 	i := mankuServer.MankuServerInstance
 	addr := mankuServer.MankuListenAddress
 	route.LoadRoutes(i)

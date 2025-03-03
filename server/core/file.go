@@ -6,21 +6,51 @@
 
 package core
 
-import "time"
+import (
+	"crypto/sha256"
+	"fmt"
+	"io"
+	"log"
+	"os"
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type File struct {
-	FileMetaData     MetaData
-	DownloadLink     string
-	TempDownloadLink string
-	Tag              string
+	ID          string
+	Name        string
+	Path        string
+	Size        string
+	CreatedTime int64  // timestamp
+	Hash        string // sha256
 }
 
-type MetaData struct {
-	ID              string
-	Name            string
-	Path            string
-	Size            string
-	CreatedTime     time.Time // timestamp
-	LastUpdatedTime time.Time // timestamp
-	Hash            string    // sha256
+func (d *File) SetFileID() {
+	d.ID = uuid.New().String()
+}
+
+func (d *File) SetFileName(n string) {
+	d.Name = n
+}
+
+func (d *File) SetFileSize(f *os.File) {
+	fileInfo, err := f.Stat()
+	if err != nil {
+		log.Println(err)
+	}
+	d.Size = fmt.Sprintf("%d", fileInfo.Size())
+}
+
+func (d *File) SetCreatedTime() {
+	d.CreatedTime = time.Now().Unix()
+}
+
+func (d *File) SetHash(f *os.File) {
+	h := sha256.New()
+	_, err := io.Copy(h, f)
+	if err != nil {
+		log.Println(err)
+	}
+	d.Hash = fmt.Sprintf("%x", h.Sum(nil))
 }

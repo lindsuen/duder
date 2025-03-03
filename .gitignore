@@ -15,6 +15,7 @@ __MACOSX/
 # Project
 /bin
 /data
+/upload
 *.exe
 *.exe~
 main

@@ -5,6 +5,7 @@ go 1.22
 require (
 	github.com/dgraph-io/badger/v4 v4.5.1
 	github.com/go-ini/ini v1.67.0
+	github.com/google/uuid v1.6.0
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/sirupsen/logrus v1.9.3
 )
