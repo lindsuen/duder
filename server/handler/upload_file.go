@@ -15,8 +15,17 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
-	cf "github.com/lindsuen/manku/internal/config"
+	cfg "github.com/lindsuen/manku/internal/config"
+	"github.com/lindsuen/manku/server/core"
 )
+
+var content struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+	Size int64  `json:"size"`
+	Path string `json:"path"`
+	Hash string `json:"hash"`
+}
 
 func UploadFile(c echo.Context) error {
 	form, err := c.MultipartForm()
@@ -25,26 +34,37 @@ func UploadFile(c echo.Context) error {
 	}
 
 	formFiles := form.File["files"]
-	for _, file := range formFiles {
-		f, err := file.Open()
+	for _, fileHeader := range formFiles {
+		multiFile, err := fileHeader.Open()
 		if err != nil {
 			return err
 		}
-		defer f.Close()
+		defer multiFile.Close()
 
-		d, err := os.Create(createDateDir(cf.Config.ServerStoragePath) + "/" + file.Filename)
+		file, err := os.Create(createDateDir(cfg.Config.ServerStoragePath) + "/" + fileHeader.Filename)
 		if err != nil {
 			log.Println(err)
 		}
-		defer d.Close()
+		defer file.Close()
 
-		_, err = io.Copy(d, f)
+		_, err = io.Copy(file, multiFile)
 		if err != nil {
 			return err
 		}
+
+		cFile := new(core.File)
+		cFile.SetFileID()
+		cFile.SetFileName(fileHeader.Filename)
+		cFile.SetFileSize(fileHeader.Size)
+		cFile.SetFileHash(file)
+
+		content.Id = cFile.ID
+		content.Name = cFile.Name
+		content.Size = cFile.Size
+		content.Hash = cFile.Hash
 	}
 
-	return c.String(http.StatusOK, "success")
+	return c.JSON(http.StatusOK, &content)
 }
 
 func createDateDir(basePath string) string {

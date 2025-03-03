@@ -21,7 +21,7 @@ type File struct {
 	ID          string
 	Name        string
 	Path        string
-	Size        string
+	Size        int64
 	CreatedTime int64  // timestamp
 	Hash        string // sha256
 }
@@ -34,19 +34,15 @@ func (d *File) SetFileName(n string) {
 	d.Name = n
 }
 
-func (d *File) SetFileSize(f *os.File) {
-	fileInfo, err := f.Stat()
-	if err != nil {
-		log.Println(err)
-	}
-	d.Size = fmt.Sprintf("%d", fileInfo.Size())
+func (d *File) SetFileSize(s int64) {
+	d.Size = s
 }
 
 func (d *File) SetCreatedTime() {
 	d.CreatedTime = time.Now().Unix()
 }
 
-func (d *File) SetHash(f *os.File) {
+func (d *File) SetFileHash(f *os.File) {
 	h := sha256.New()
 	_, err := io.Copy(h, f)
 	if err != nil {
