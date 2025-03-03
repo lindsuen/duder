@@ -1,1 +1,1 @@
-FROM debian:bookworm-slim
+FROM debian:bullseye-slim
