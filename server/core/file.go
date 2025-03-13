@@ -20,8 +20,8 @@ import (
 type File struct {
 	ID          string
 	Name        string
-	Path        string
 	Size        int64
+	Path        string
 	CreatedTime int64  // timestamp
 	Hash        string // sha256
 }
@@ -38,7 +38,11 @@ func (d *File) SetFileSize(s int64) {
 	d.Size = s
 }
 
-func (d *File) SetCreatedTime() {
+func (d *File) SetFilePath(p string) {
+	d.Path = p
+}
+
+func (d *File) SetFileCreatedTime() {
 	d.CreatedTime = time.Now().Unix()
 }
 

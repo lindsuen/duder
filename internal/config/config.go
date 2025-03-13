@@ -13,55 +13,41 @@ import (
 )
 
 var (
-	config *ini.File
-	err    error
-
-	Config *ServerConfig
+	initFile *ini.File
+	err      error
+	Config   *ServerConfig
 )
 
-func init() {
-	Config, err = ParseIni("config/config.ini")
+type ServerConfig struct {
+	Address     string
+	Port        string
+	DataPath    string
+	StoragePath string
+}
+
+func InitServerConfig() {
+	Config, err = parseInitFile("config/config.ini")
 	if err != nil {
 		log.Fatalln(err)
 	}
 }
 
-type ServerConfig struct {
-	ServerAddress     string
-	ServerPort        string
-	ServerDataPath    string
-	ServerStoragePath string
-}
-
-func (s *ServerConfig) initServerConfig() {
-	// Manku's default listening address is "0.0.0.0".
-	s.ServerAddress = "0.0.0.0"
-
-	// Manku's default listening port is "5363".
-	s.ServerPort = "5363"
-
-	// Manku's default data path is "data".
-	s.ServerDataPath = "data"
-
-	// Manku's default storage path is "upload".
-	s.ServerDataPath = "upload"
-}
-
 // ParseIni parses the config.ini file. The parameter fpath is the relative path to config.ini.
-func ParseIni(fpath string) (*ServerConfig, error) {
-	serverConfig := new(ServerConfig)
-	serverConfig.initServerConfig()
-	config, err = ini.Load(fpath)
+func parseInitFile(fpath string) (*ServerConfig, error) {
+	initFile, err = ini.Load(fpath)
 	if err != nil {
 		return nil, err
 	}
-	serverConfig.ServerAddress = parseSessionKey("server", "address")
-	serverConfig.ServerPort = parseSessionKey("server", "port")
-	serverConfig.ServerDataPath = parseSessionKey("server", "data_path")
-	serverConfig.ServerStoragePath = parseSessionKey("server", "storage_path")
-	return serverConfig, nil
+
+	cfg := new(ServerConfig)
+	cfg.Address = parseSessionKey("server", "address")
+	cfg.Port = parseSessionKey("server", "port")
+	cfg.DataPath = parseSessionKey("server", "data_path")
+	cfg.StoragePath = parseSessionKey("server", "storage_path")
+
+	return cfg, nil
 }
 
 func parseSessionKey(s string, k string) string {
-	return config.Section(s).Key(k).String()
+	return initFile.Section(s).Key(k).String()
 }

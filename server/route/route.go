@@ -13,8 +13,6 @@ import (
 
 // LoadEchoRoute can load routes of Echo.
 func LoadRoutes(r *echo.Echo) {
-	// root path
 	r.GET("/", h.GetRoot)
-
 	r.POST("/upload", h.UploadFile)
 }

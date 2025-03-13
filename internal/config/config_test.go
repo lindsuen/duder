@@ -12,9 +12,9 @@ import (
 )
 
 func TestParseIni(t *testing.T) {
-	c, err := ParseIni("../../config/config.ini")
+	cfg, err := parseInitFile("../../config/config.ini")
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("The listening address: " + c.ServerAddress + ":" + c.ServerPort)
+	fmt.Println("The listening address: " + cfg.Address + ":" + cfg.Port)
 }

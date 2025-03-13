@@ -20,11 +20,12 @@ import (
 )
 
 var content struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
-	Size int64  `json:"size"`
-	Path string `json:"path"`
-	Hash string `json:"hash"`
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	Size        int64  `json:"size"`
+	Path        string `json:"path"`
+	CreatedTime int64  `json:"createdTime"`
+	Hash        string `json:"hash"`
 }
 
 func UploadFile(c echo.Context) error {
@@ -41,7 +42,8 @@ func UploadFile(c echo.Context) error {
 		}
 		defer multiFile.Close()
 
-		file, err := os.Create(createDateDir(cfg.Config.ServerStoragePath) + "/" + fileHeader.Filename)
+		storagePath := createDateDir(cfg.Config.StoragePath) + "/" + fileHeader.Filename
+		file, err := os.Create(storagePath)
 		if err != nil {
 			log.Println(err)
 		}
@@ -56,11 +58,15 @@ func UploadFile(c echo.Context) error {
 		cFile.SetFileID()
 		cFile.SetFileName(fileHeader.Filename)
 		cFile.SetFileSize(fileHeader.Size)
+		cFile.SetFilePath(storagePath)
+		cFile.SetFileCreatedTime()
 		cFile.SetFileHash(file)
 
 		content.Id = cFile.ID
 		content.Name = cFile.Name
 		content.Size = cFile.Size
+		content.Path = cFile.Path
+		content.CreatedTime = cFile.CreatedTime
 		content.Hash = cFile.Hash
 	}
 
