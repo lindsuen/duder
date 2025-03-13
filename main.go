@@ -9,12 +9,12 @@ package main
 import (
 	"log"
 
-	"github.com/lindsuen/manku/server"
+	s "github.com/lindsuen/manku/server"
 )
 
 // It's the startup portal for Manku server.
 func main() {
-	err := server.ServerStart()
+	err := s.ServerStart()
 	if err != nil {
 		log.Fatalln(err)
 	}

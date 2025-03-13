@@ -7,7 +7,6 @@
 package db
 
 import (
-	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -23,17 +22,13 @@ var (
 func Open() (*badger.DB, error) {
 	badgerDB, err = badger.Open(badger.DefaultOptions("data"))
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	return badgerDB, nil
 }
 
-func Close() {
-	err = badgerDB.Close()
-	if err != nil {
-		log.Println("Failed to close database.", "err", err)
-	}
+func Close() error {
+	return badgerDB.Close()
 }
 
 func Set(key []byte, value []byte) {
@@ -111,7 +106,7 @@ func IteratorKeysAndValues() {
 			item := it.Item()
 			k := item.Key()
 			err := item.Value(func(v []byte) error {
-				fmt.Printf("key=%s, value=%s\n", k, v)
+				log.Printf("key=%s, value=%s\n", k, v)
 				return nil
 			})
 			if err != nil {
@@ -134,7 +129,7 @@ func IteratorKeys() {
 		for it.Rewind(); it.Valid(); it.Next() {
 			item := it.Item()
 			k := item.Key()
-			fmt.Printf("key=%s\n", k)
+			log.Printf("key=%s\n", k)
 		}
 		return nil
 	})
@@ -152,7 +147,7 @@ func SeekWithPrefix(prefixStr string) {
 			item := it.Item()
 			k := item.Key()
 			err := item.Value(func(v []byte) error {
-				fmt.Printf("key=%s, value=%s\n", k, v)
+				log.Printf("key=%s, value=%s\n", k, v)
 				return nil
 			})
 			if err != nil {
