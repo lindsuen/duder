@@ -11,8 +11,9 @@ import (
 	h "github.com/lindsuen/manku/server/handler"
 )
 
-// LoadEchoRoute can load routes of Echo.
-func LoadRoutes(r *echo.Echo) {
+// LoadEchoRoutes can load routes of Echo.
+func LoadEchoRoutes(r *echo.Echo) {
 	r.GET("/", h.GetRoot)
 	r.POST("/upload", h.UploadFile)
+	r.GET("/download", h.DownloadFile)
 }

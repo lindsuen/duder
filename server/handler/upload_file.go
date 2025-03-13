@@ -8,15 +8,18 @@ package handler
 
 import (
 	"crypto/sha1"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo/v4"
 	cfg "github.com/lindsuen/manku/internal/config"
+	"github.com/lindsuen/manku/internal/db"
 	"github.com/lindsuen/manku/server/core"
 )
 
@@ -42,8 +45,16 @@ func UploadFile(c echo.Context) error {
 			return err
 		}
 		defer multiFile.Close()
+		fileName := fileHeader.Filename
+		fileSize := fileHeader.Size
 
-		storagePath := createDateDir(cfg.Config.StoragePath) + "/" + decodeFileName(fileHeader.Filename)
+		cFile := new(core.File)
+		cFile.SetFileID()
+		cFile.SetFileName(fileName)
+		cFile.SetFileSize(fileSize)
+		cFile.SetFileCreatedTime()
+
+		storagePath := createDateDir(cfg.Config.StoragePath) + "/" + decodeFileName(fileName, cFile.CreatedTime)
 		file, err := os.Create(storagePath)
 		if err != nil {
 			log.Println(err)
@@ -54,13 +65,7 @@ func UploadFile(c echo.Context) error {
 		if err != nil {
 			return err
 		}
-
-		cFile := new(core.File)
-		cFile.SetFileID()
-		cFile.SetFileName(fileHeader.Filename)
-		cFile.SetFileSize(fileHeader.Size)
 		cFile.SetFilePath(storagePath)
-		cFile.SetFileCreatedTime()
 		cFile.SetFileHash(file)
 
 		content.Id = cFile.ID
@@ -69,6 +74,10 @@ func UploadFile(c echo.Context) error {
 		content.Path = cFile.Path
 		content.CreatedTime = cFile.CreatedTime
 		content.Hash = cFile.Hash
+
+		key := []byte(content.Id)
+		value, _ := json.Marshal(content)
+		db.Set(key, value)
 	}
 
 	return c.JSON(http.StatusOK, &content)
@@ -85,7 +94,8 @@ func createDateDir(basePath string) string {
 	return folderPath
 }
 
-func decodeFileName(s string) string {
-	data := []byte(s)
-	return fmt.Sprintf("%x", sha1.Sum(data))
+func decodeFileName(name string, timestamp int64) string {
+	nameByte := []byte(name)
+	dataPrefix := fmt.Appendf(nil, "%x", sha1.Sum(nameByte))
+	return string(dataPrefix[:30]) + strconv.FormatInt(timestamp, 10)
 }

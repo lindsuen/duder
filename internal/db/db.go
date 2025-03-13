@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	badger "github.com/dgraph-io/badger/v4"
+	"github.com/dgraph-io/badger/v4"
 )
 
 var (
@@ -57,7 +57,7 @@ func SetWithTTL(key []byte, value []byte, ttl int64) {
 	}
 }
 
-func Get(key []byte) string {
+func Get(key []byte) []byte {
 	var ival []byte
 	err := badgerDB.View(func(txn *badger.Txn) error {
 		item, err := txn.Get(key)
@@ -70,11 +70,11 @@ func Get(key []byte) string {
 	if err != nil {
 		log.Println("Failed to read data from the cache.", "key", string(key), "error", err)
 	}
-	return string(ival)
+	return ival
 }
 
 func Has(key []byte) (bool, error) {
-	var exist bool = false
+	var exist = false
 	err := badgerDB.View(func(txn *badger.Txn) error {
 		_, err := txn.Get(key)
 		if err != nil {

@@ -45,8 +45,8 @@ func ServerStart() error {
 	}
 	defer badgerDB.Close()
 
-	route.LoadRoutes(inst)
-	logger.LoadLogger(inst)
+	route.LoadEchoRoutes(inst)
+	logger.LoadEchoLogger(inst)
 	inst.Logger.Fatal(inst.Start(addr))
 
 	return nil

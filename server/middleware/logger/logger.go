@@ -12,8 +12,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// LoadLogger can load logger of Echo.
-func LoadLogger(e *echo.Echo) {
+// LoadEchoLogger can load logger of Echo.
+func LoadEchoLogger(e *echo.Echo) {
 	log := logrus.New()
 	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		LogURI:    true,
