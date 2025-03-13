@@ -7,6 +7,7 @@
 package handler
 
 import (
+	"crypto/sha1"
 	"fmt"
 	"io"
 	"log"
@@ -42,7 +43,7 @@ func UploadFile(c echo.Context) error {
 		}
 		defer multiFile.Close()
 
-		storagePath := createDateDir(cfg.Config.StoragePath) + "/" + fileHeader.Filename
+		storagePath := createDateDir(cfg.Config.StoragePath) + "/" + decodeFileName(fileHeader.Filename)
 		file, err := os.Create(storagePath)
 		if err != nil {
 			log.Println(err)
@@ -82,4 +83,9 @@ func createDateDir(basePath string) string {
 		os.Chmod(folderPath, 0777)
 	}
 	return folderPath
+}
+
+func decodeFileName(s string) string {
+	data := []byte(s)
+	return fmt.Sprintf("%x", sha1.Sum(data))
 }
