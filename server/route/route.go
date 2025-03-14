@@ -11,9 +11,15 @@ import (
 	h "github.com/lindsuen/manku/server/handler"
 )
 
+const routePrefix = "/file"
+
 // LoadEchoRoutes can load routes of Echo.
 func LoadEchoRoutes(r *echo.Echo) {
 	r.GET("/", h.GetRoot)
-	r.POST("/upload", h.UploadFile)
-	r.GET("/download", h.DownloadFile)
+
+	r.GET(routePrefix+"/", h.GetRoot2)
+
+	r.POST(routePrefix+"/upload", h.UploadFile)
+
+	r.GET(routePrefix+"/download", h.DownloadFile)
 }

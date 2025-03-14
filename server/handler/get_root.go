@@ -7,10 +7,15 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 )
 
 func GetRoot(c echo.Context) error {
-	// return c.String(http.StatusOK, "manku")
+	return c.String(http.StatusOK, "404")
+}
+
+func GetRoot2(c echo.Context) error {
 	return c.File("static/index.html")
 }
