@@ -97,5 +97,5 @@ func createDateDir(basePath string) string {
 func decodeFileName(name string, timestamp int64) string {
 	nameByte := []byte(name)
 	dataPrefix := fmt.Appendf(nil, "%x", sha1.Sum(nameByte))
-	return string(dataPrefix[:30]) + strconv.FormatInt(timestamp, 10)
+	return string(dataPrefix[:29]) + strconv.FormatInt(timestamp, 10)
 }

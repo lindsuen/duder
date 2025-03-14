@@ -43,14 +43,14 @@ func (d *File) SetFilePath(p string) {
 }
 
 func (d *File) SetFileCreatedTime() {
-	d.CreatedTime = time.Now().Unix()
+	d.CreatedTime = time.Now().UnixMilli()
 }
 
 func (d *File) SetFileHash(f *os.File) {
-	h := sha256.New()
-	_, err := io.Copy(h, f)
+	hash := sha256.New()
+	_, err := io.Copy(hash, f)
 	if err != nil {
 		log.Println(err)
 	}
-	d.Hash = fmt.Sprintf("%x", h.Sum(nil))
+	d.Hash = fmt.Sprintf("%x", hash.Sum(nil))
 }
