@@ -39,7 +39,7 @@ func ServerStart() error {
 	inst := serv.Instance
 	addr := serv.ListenAddress
 
-	_, err := badgerDB.Open()
+	_, err := badgerDB.Open(cfg.Config.DataPath)
 	if err != nil {
 		return err
 	}

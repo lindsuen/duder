@@ -19,8 +19,8 @@ var (
 	err      error
 )
 
-func Open() (*badger.DB, error) {
-	badgerDB, err = badger.Open(badger.DefaultOptions("data"))
+func Open(path string) (*badger.DB, error) {
+	badgerDB, err = badger.Open(badger.DefaultOptions(path))
 	if err != nil {
 		return nil, err
 	}
