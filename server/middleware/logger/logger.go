@@ -12,23 +12,31 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const timestampFormat = "2006-01-02 15:04:05.000"
+
 // LoadEchoLogger can load logger of Echo.
 func LoadEchoLogger(e *echo.Echo) {
 	log := logrus.New()
 	log.SetFormatter(&logrus.TextFormatter{
-		TimestampFormat: "2006-01-02 15:04:05",
+		TimestampFormat: timestampFormat,
 		FullTimestamp:   true,
 		ForceQuote:      true,
 	})
-	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
-		LogURI:    true,
-		LogStatus: true,
+	// log.SetFormatter(&logrus.JSONFormatter{
+	// 	TimestampFormat: timestampFormat,
+	// })
+	middlewareRequestLogger := middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogRemoteIP: true,
+		LogURI:      true,
+		LogStatus:   true,
 		LogValuesFunc: func(c echo.Context, values middleware.RequestLoggerValues) error {
 			log.WithFields(logrus.Fields{
-				"url":    values.URI,
-				"status": values.Status,
-			}).Info("request")
+				"remote_ip": values.RemoteIP,
+				"url":       values.URI,
+				"status":    values.Status,
+			}).Info("REQUEST")
 			return nil
 		},
-	}))
+	})
+	e.Use(middlewareRequestLogger)
 }
