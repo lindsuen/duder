@@ -7,6 +7,7 @@
 package handler
 
 import (
+	"encoding/base64"
 	"encoding/json"
 
 	"github.com/labstack/echo/v4"
@@ -17,7 +18,8 @@ import (
 func DownloadFile(c echo.Context) error {
 	fileId := c.QueryParam("fileid")
 	file := new(core.File)
-	err := json.Unmarshal(db.Get([]byte(fileId)), &file)
+	value, _ := base64.RawURLEncoding.DecodeString(string(db.Get([]byte(fileId))))
+	err := json.Unmarshal(value, &file)
 	if err != nil {
 		return err
 	}

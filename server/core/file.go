@@ -8,6 +8,7 @@ package core
 
 import (
 	"crypto/sha256"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"log"
@@ -27,7 +28,7 @@ type File struct {
 }
 
 func (d *File) SetFileID() {
-	d.ID = uuid.New().String()
+	d.ID = base64.RawURLEncoding.EncodeToString([]byte(uuid.New().String()))
 }
 
 func (d *File) SetFileName(n string) {

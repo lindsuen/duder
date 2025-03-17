@@ -8,6 +8,7 @@ package handler
 
 import (
 	"crypto/sha1"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -54,7 +55,7 @@ func UploadFile(c echo.Context) error {
 		cFile.SetFileSize(fileSize)
 		cFile.SetFileCreatedTime()
 
-		storagePath := createDateDir(cfg.Config.StoragePath) + "/" + decodeFileName(fileName, cFile.CreatedTime)
+		storagePath := createDateDir(cfg.Config.StoragePath) + "/" + setLocalFileName(fileName, cFile.CreatedTime)
 		file, err := os.Create(storagePath)
 		if err != nil {
 			log.Println(err)
@@ -77,7 +78,7 @@ func UploadFile(c echo.Context) error {
 
 		key := []byte(content.Id)
 		value, _ := json.Marshal(content)
-		db.Set(key, value)
+		db.Set(key, []byte(base64.RawURLEncoding.EncodeToString(value)))
 	}
 
 	return c.JSON(http.StatusOK, &content)
@@ -94,7 +95,7 @@ func createDateDir(basePath string) string {
 	return folderPath
 }
 
-func decodeFileName(name string, timestamp int64) string {
+func setLocalFileName(name string, timestamp int64) string {
 	nameByte := []byte(name)
 	dataPrefix := fmt.Appendf(nil, "%x", sha1.Sum(nameByte))
 	return string(dataPrefix[:29]) + strconv.FormatInt(timestamp, 10)
