@@ -7,24 +7,46 @@
 package db
 
 import (
+	"encoding/base64"
 	"fmt"
 	"testing"
 )
 
-var key = []byte("")
+var (
+	dataDirectoryPath = "../../data"
+	testKey           = []byte("")
+	testKeyPrefix     = ""
+)
 
 func TestGet(t *testing.T) {
-	_, err := Open("../../data")
+	_, err := Open(dataDirectoryPath)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(string(Get(key)))
+	value, _ := base64.RawURLEncoding.DecodeString(string(Get(testKey)))
+	fmt.Println("value=" + string(value))
+}
+
+func TestIteratorKeys(t *testing.T) {
+	_, err := Open(dataDirectoryPath)
+	if err != nil {
+		fmt.Println(err)
+	}
+	IteratorKeys()
 }
 
 func TestIteratorKeysAndValues(t *testing.T) {
-	_, err := Open("../../data")
+	_, err := Open(dataDirectoryPath)
 	if err != nil {
 		fmt.Println(err)
 	}
 	IteratorKeysAndValues()
+}
+
+func TestSeekWithPrefix(t *testing.T) {
+	_, err := Open(dataDirectoryPath)
+	if err != nil {
+		fmt.Println(err)
+	}
+	SeekWithPrefix(testKeyPrefix)
 }
