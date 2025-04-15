@@ -8,8 +8,8 @@ package handler
 
 import (
 	"encoding/base64"
+	"encoding/json"
 
-	"github.com/bytedance/sonic"
 	"github.com/labstack/echo/v4"
 	"github.com/lindsuen/manku/internal/db"
 	"github.com/lindsuen/manku/server/core"
@@ -19,7 +19,7 @@ func DownloadFile(c echo.Context) error {
 	fileId := c.QueryParam("fileid")
 	file := new(core.File)
 	value, _ := base64.RawURLEncoding.DecodeString(string(db.Get([]byte(fileId))))
-	err := sonic.Unmarshal(value, &file)
+	err := json.Unmarshal(value, &file)
 	if err != nil {
 		return err
 	}

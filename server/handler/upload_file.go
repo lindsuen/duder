@@ -9,6 +9,7 @@ package handler
 import (
 	"crypto/sha1"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -17,7 +18,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bytedance/sonic"
 	"github.com/labstack/echo/v4"
 	cfg "github.com/lindsuen/manku/internal/config"
 	"github.com/lindsuen/manku/internal/db"
@@ -77,7 +77,7 @@ func UploadFile(c echo.Context) error {
 		content.Hash = cFile.Hash
 
 		key := []byte(content.Id)
-		value, _ := sonic.Marshal(content)
+		value, _ := json.Marshal(content)
 		db.Set(key, []byte(base64.RawURLEncoding.EncodeToString(value)))
 	}
 
