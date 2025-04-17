@@ -49,6 +49,10 @@ func UploadFile(c echo.Context) error {
 		fileName := fileHeader.Filename
 		fileSize := fileHeader.Size
 
+		if fileSize > int64(parseMaxLength(cfg.Config.MaxLength)) {
+			return c.String(http.StatusForbidden, fileName+" is too large.")
+		}
+
 		cFile := new(core.File)
 		cFile.SetFileID()
 		cFile.SetFileName(fileName)
@@ -99,4 +103,9 @@ func setLocalFileName(name string, timestamp int64) string {
 	nameByte := []byte(name)
 	dataPrefix := fmt.Appendf(nil, "%x", sha1.Sum(nameByte))
 	return string(dataPrefix[:29]) + strconv.FormatInt(timestamp, 10)
+}
+
+func parseMaxLength(s string) int {
+	maxlength, _ := strconv.Atoi(s)
+	return maxlength
 }

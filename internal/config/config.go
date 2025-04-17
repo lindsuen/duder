@@ -13,9 +13,10 @@ import (
 )
 
 var (
+	Config *ServerConfig
+
 	initFile *ini.File
 	err      error
-	Config   *ServerConfig
 )
 
 type ServerConfig struct {
@@ -23,6 +24,7 @@ type ServerConfig struct {
 	Port        string
 	DataPath    string
 	StoragePath string
+	MaxLength   string
 }
 
 func InitServerConfig() {
@@ -44,6 +46,7 @@ func parseInitFile(fpath string) (*ServerConfig, error) {
 	cfg.Port = parseSessionKey("server", "port")
 	cfg.DataPath = parseSessionKey("server", "data_path")
 	cfg.StoragePath = parseSessionKey("server", "storage_path")
+	cfg.MaxLength = parseSessionKey("server", "max_length")
 
 	return cfg, nil
 }
