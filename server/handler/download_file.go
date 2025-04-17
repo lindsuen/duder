@@ -9,6 +9,8 @@ package handler
 import (
 	"encoding/base64"
 	"encoding/json"
+	"net/http"
+	"os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/lindsuen/manku/internal/db"
@@ -23,5 +25,14 @@ func DownloadFile(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+	if !fileIsExist(file.Path) {
+		return c.String(http.StatusNotFound, "The file is not found.")
+	}
 	return c.Attachment(file.Path, file.Name)
+}
+
+// fileIsExist
+func fileIsExist(p string) bool {
+	_, err := os.Stat(p)
+	return err == nil
 }
