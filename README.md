@@ -7,6 +7,21 @@
 
 Manku File Service.
 
+## Start
+
+### Binary
+
+```sh
+$ cd ${TARGET_DIR}/
+$ ./manku
+```
+
+### Docker
+
+```sh
+$ docker 
+```
+
 ## License
 
 [BSD 2-Clause license](https://github.com/lindsuen/manku/blob/master/README.md)
