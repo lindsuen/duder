@@ -9,6 +9,7 @@ package handler
 import (
 	"encoding/base64"
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 
@@ -17,21 +18,42 @@ import (
 	"github.com/lindsuen/manku/server/core"
 )
 
+type DwonloadResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+}
+
 func DownloadFile(c echo.Context) error {
-	fileId := c.QueryParam("fileid")
+	downloadResponse := new(DwonloadResponse)
+	downloadResponse.Success = true
+	downloadResponse.Message = ""
+
 	file := new(core.File)
-	value, _ := base64.RawURLEncoding.DecodeString(string(db.Get([]byte(fileId))))
+	fileId := c.QueryParam("fileid")
+
+	encodeValue := string(db.Get([]byte(fileId)))
+	if encodeValue == "" {
+		downloadResponse.Success = false
+		downloadResponse.Message = "The file is not found."
+		log.Println("fileid: " + fileId + ". The file is not found.")
+		return c.JSON(http.StatusOK, &downloadResponse)
+	}
+
+	value, _ := base64.RawURLEncoding.DecodeString(encodeValue)
 	err := json.Unmarshal(value, &file)
 	if err != nil {
 		return err
 	}
+
 	if !fileIsExist(file.Path) {
-		return c.String(http.StatusNotFound, "The file is not found.")
+		downloadResponse.Success = false
+		downloadResponse.Message = "The file is not found."
+		log.Println("fileid: " + fileId + ". The file is not found.")
+		return c.JSON(http.StatusOK, &downloadResponse)
 	}
 	return c.Attachment(file.Path, file.Name)
 }
 
-// fileIsExist
 func fileIsExist(p string) bool {
 	_, err := os.Stat(p)
 	return err == nil

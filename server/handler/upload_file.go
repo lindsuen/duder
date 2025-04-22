@@ -24,7 +24,7 @@ import (
 	"github.com/lindsuen/manku/server/core"
 )
 
-type Response struct {
+type UploadResponse struct {
 	Success bool       `json:"success"`
 	Message []FileInfo `json:"message"`
 }
@@ -39,8 +39,9 @@ type FileInfo struct {
 }
 
 func UploadFile(c echo.Context) error {
-	res := new(Response)
-	res.Message = []FileInfo{}
+	response := new(UploadResponse)
+	response.Success = true
+	response.Message = []FileInfo{}
 	fileInfo := new(FileInfo)
 
 	form, err := c.MultipartForm()
@@ -55,21 +56,21 @@ func UploadFile(c echo.Context) error {
 			return err
 		}
 		defer multiFile.Close()
+
 		fileName := fileHeader.Filename
 		fileSize := fileHeader.Size
-
 		if fileSize > int64(parseMaxLength(cfg.Config.MaxLength)) {
-			log.Println(fileName + " is too large.")
+			log.Println("The file " + fileName + " is too large.")
 			continue
 		}
 
-		cFile := new(core.File)
-		cFile.SetFileID()
-		cFile.SetFileName(fileName)
-		cFile.SetFileSize(fileSize)
-		cFile.SetFileCreatedTime()
+		coreFile := new(core.File)
+		coreFile.SetFileID()
+		coreFile.SetFileName(fileName)
+		coreFile.SetFileSize(fileSize)
+		coreFile.SetFileCreatedTime()
 
-		storagePath := createDateDir(cfg.Config.StoragePath) + "/" + setLocalFileName(fileName, cFile.CreatedTime)
+		storagePath := createDateDir(cfg.Config.StoragePath) + "/" + setLocalFileName(fileName, coreFile.CreatedTime)
 		file, err := os.Create(storagePath)
 		if err != nil {
 			log.Println(err)
@@ -80,24 +81,23 @@ func UploadFile(c echo.Context) error {
 		if err != nil {
 			return err
 		}
-		cFile.SetFilePath(storagePath)
-		cFile.SetFileHash(file)
+		coreFile.SetFilePath(storagePath)
+		coreFile.SetFileHash(file)
 
-		fileInfo.ID = cFile.ID
-		fileInfo.Name = cFile.Name
-		fileInfo.Size = cFile.Size
-		fileInfo.Path = cFile.Path
-		fileInfo.CreatedTime = cFile.CreatedTime
-		fileInfo.Hash = cFile.Hash
+		fileInfo.ID = coreFile.ID
+		fileInfo.Name = coreFile.Name
+		fileInfo.Size = coreFile.Size
+		fileInfo.Path = coreFile.Path
+		fileInfo.CreatedTime = coreFile.CreatedTime
+		fileInfo.Hash = coreFile.Hash
 
 		key := []byte(fileInfo.ID)
 		value, _ := json.Marshal(fileInfo)
 		db.Set(key, []byte(base64.RawURLEncoding.EncodeToString(value)))
 
-		res.Message = append(res.Message, *fileInfo)
+		response.Message = append(response.Message, *fileInfo)
 	}
-	res.Success = true
-	return c.JSON(http.StatusOK, &res)
+	return c.JSON(http.StatusOK, &response)
 }
 
 func createDateDir(basePath string) string {
