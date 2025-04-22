@@ -24,8 +24,13 @@ import (
 	"github.com/lindsuen/manku/server/core"
 )
 
-var content struct {
-	Id          string `json:"id"`
+type Response struct {
+	Success bool       `json:"success"`
+	Message []FileInfo `json:"message"`
+}
+
+type FileInfo struct {
+	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Size        int64  `json:"size"`
 	Path        string `json:"path"`
@@ -34,6 +39,10 @@ var content struct {
 }
 
 func UploadFile(c echo.Context) error {
+	res := new(Response)
+	res.Message = []FileInfo{}
+	fileInfo := new(FileInfo)
+
 	form, err := c.MultipartForm()
 	if err != nil {
 		return err
@@ -50,7 +59,8 @@ func UploadFile(c echo.Context) error {
 		fileSize := fileHeader.Size
 
 		if fileSize > int64(parseMaxLength(cfg.Config.MaxLength)) {
-			return c.String(http.StatusForbidden, fileName+" is too large.")
+			log.Println(fileName + " is too large.")
+			continue
 		}
 
 		cFile := new(core.File)
@@ -73,19 +83,21 @@ func UploadFile(c echo.Context) error {
 		cFile.SetFilePath(storagePath)
 		cFile.SetFileHash(file)
 
-		content.Id = cFile.ID
-		content.Name = cFile.Name
-		content.Size = cFile.Size
-		content.Path = cFile.Path
-		content.CreatedTime = cFile.CreatedTime
-		content.Hash = cFile.Hash
+		fileInfo.ID = cFile.ID
+		fileInfo.Name = cFile.Name
+		fileInfo.Size = cFile.Size
+		fileInfo.Path = cFile.Path
+		fileInfo.CreatedTime = cFile.CreatedTime
+		fileInfo.Hash = cFile.Hash
 
-		key := []byte(content.Id)
-		value, _ := json.Marshal(content)
+		key := []byte(fileInfo.ID)
+		value, _ := json.Marshal(fileInfo)
 		db.Set(key, []byte(base64.RawURLEncoding.EncodeToString(value)))
-	}
 
-	return c.JSON(http.StatusOK, &content)
+		res.Message = append(res.Message, *fileInfo)
+	}
+	res.Success = true
+	return c.JSON(http.StatusOK, &res)
 }
 
 func createDateDir(basePath string) string {
