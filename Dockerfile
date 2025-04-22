@@ -2,12 +2,13 @@ FROM debian:bookworm-slim
 
 WORKDIR /usr/local/manku
 
-RUN set -e && mkdir config
+RUN set -e && mkdir config static
 
 COPY ./bin/manku ./
-COPY ./config/config.ini ./config
+COPY ./config/config.ini ./config/
+COPY ./static/index.html ./static/
 
-RUN set -e && apt-get update && chmod +x ./manku
+RUN set -e && chmod +x ./manku
 
 EXPOSE 5363
 
