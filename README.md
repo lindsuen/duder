@@ -5,21 +5,34 @@
 [![GitHub Release](https://img.shields.io/github/v/release/lindsuen/manku)](https://github.com/lindsuen/manku/releases)
 [![GitHub License](https://img.shields.io/github/license/lindsuen/manku)](https://github.com/lindsuen/manku/blob/master/README.md)
 
-Manku File Service.
+Fast File Service in Go.
 
 ## Start
+
+```sh
+$ git clone https://github.com/lindsuen/manku.git
+$ cd manku/
+```
 
 ### Binary
 
 ```sh
-$ cd ${TARGET_DIR}/
+$ make build
+```
+
+```sh
+$ cd bin/
 $ ./manku
 ```
 
 ### Docker
 
 ```sh
-$ docker 
+$ docker build --no-cache -t manku-server:latest .
+```
+
+```sh
+$ docker run --name manku-server -d manku-server:latest -p 5363:5363
 ```
 
 ## License
