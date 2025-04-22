@@ -21,8 +21,7 @@ $ make build
 ```
 
 ```sh
-$ cd bin/
-$ ./manku
+$ mv bin/manku ./ && ./manku
 ```
 
 ### Docker
@@ -32,7 +31,7 @@ $ docker build --no-cache -t manku-server:latest .
 ```
 
 ```sh
-$ docker run --name manku-server -d manku-server:latest -p 5363:5363
+$ docker run -p 5363:5363 --name manku-server -v ${TARGET_DIR}/data:/usr/local/manku/data -v ${TARGET_DIR}/upload:/usr/local/manku/upload -d manku-server:latest
 ```
 
 ## License
