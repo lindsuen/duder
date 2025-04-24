@@ -1,4 +1,4 @@
-module github.com/lindsuen/manku
+module github.com/lindsuen/duder
 
 go 1.24
 

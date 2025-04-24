@@ -1,4 +1,4 @@
-// manku - download_file.go
+// duder - download_file.go
 // Copyright (C) 2025 LindSuen <lindsuen@foxmail.com>
 //
 // Use of this source code is governed by a BSD 2-Clause license that can be
@@ -14,8 +14,8 @@ import (
 	"os"
 
 	"github.com/labstack/echo/v4"
-	"github.com/lindsuen/manku/internal/db"
-	"github.com/lindsuen/manku/server/core"
+	"github.com/lindsuen/duder/internal/db"
+	"github.com/lindsuen/duder/server/core"
 )
 
 type DwonloadResponse struct {

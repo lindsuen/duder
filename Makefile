@@ -1,10 +1,10 @@
-# manku - Makefile
+# duder - Makefile
 # Copyright (C) 2024 LindSuen <lindsuen@foxmail.com>
 #
 # Use of this source code is governed by a BSD 2-Clause license that can be
 # found in the LICENSE file.
 
-APP := manku
+APP := duder
 DIR := bin
 
 .PHONY: all clean build linux

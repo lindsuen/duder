@@ -1,4 +1,4 @@
-// manku - upload_file.go
+// duder - upload_file.go
 // Copyright (C) 2025 LindSuen <lindsuen@foxmail.com>
 //
 // Use of this source code is governed by a BSD 2-Clause license that can be
@@ -19,9 +19,9 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
-	cfg "github.com/lindsuen/manku/internal/config"
-	"github.com/lindsuen/manku/internal/db"
-	"github.com/lindsuen/manku/server/core"
+	cfg "github.com/lindsuen/duder/internal/config"
+	"github.com/lindsuen/duder/internal/db"
+	"github.com/lindsuen/duder/server/core"
 )
 
 type UploadResponse struct {
