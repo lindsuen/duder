@@ -54,7 +54,7 @@ func DownloadFile(c echo.Context) error {
 	return c.Attachment(file.Path, file.Name)
 }
 
-func fileIsExist(p string) bool {
-	_, err := os.Stat(p)
+func fileIsExist(f string) bool {
+	_, err := os.Stat(f)
 	return err == nil
 }
