@@ -48,9 +48,21 @@ func parseInitFile(fpath string) (*ServerConfig, error) {
 	cfg.StoragePath = parseSessionKey("server", "storage_path")
 	cfg.MaxLength = parseSessionKey("server", "max_length")
 
+	setDefaultValue(&cfg.Address, "0.0.0.0")
+	setDefaultValue(&cfg.Port, "5363")
+	setDefaultValue(&cfg.DataPath, "data")
+	setDefaultValue(&cfg.StoragePath, "upload")
+	setDefaultValue(&cfg.MaxLength, "104857600")
+
 	return cfg, nil
 }
 
 func parseSessionKey(s string, k string) string {
 	return initFile.Section(s).Key(k).String()
+}
+
+func setDefaultValue(k *string, v string) {
+	if *k == "" {
+		*k = v
+	}
 }
