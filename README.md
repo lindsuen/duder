@@ -16,6 +16,8 @@ $ cd duder/
 
 ### Binary
 
+The `make` tool is needed.
+
 ```sh
 $ make build
 ```
@@ -25,6 +27,12 @@ $ mv bin/duder ./ && ./duder
 ```
 
 ### Docker
+
+The `make` and `docker` tools are needed.
+
+```sh
+$ make build
+```
 
 ```sh
 $ docker build --no-cache -t duder-server:latest .
