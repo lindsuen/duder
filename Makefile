@@ -20,7 +20,7 @@ build:
 linux:
 	@# linux-amd64:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${DIR}/${APP} -ldflags "-s -w" .
-	@cd ${DIR}/ && mkdir {config,static} && cp ../config/config.ini config/ && cp ../static/index.html static/ && tar -zcf ${APP}-linux_amd64.tar.gz ${APP} config/ static/ && rm -rf ./* && cd ../
+	cd ${DIR}/ && mkdir {config,static} && cp ../config/config.ini config/ && cp ../static/index.html static/ && tar -zcf ${APP}-linux_amd64.tar.gz ${APP} config/ static/ && rm -rf ${APP} config/ static/ && cd ../
 	@# linux-arm64:
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o ${DIR}/${APP} -ldflags "-s -w" .
-	@cd ${DIR}/ && mkdir {config,static} && cp ../config/config.ini config/ && cp ../static/index.html static/ && tar -zcf ${APP}-linux_arm64.tar.gz ${APP} config/ static/ && rm -rf ./* && cd ../
+	@cd ${DIR}/ && mkdir {config,static} && cp ../config/config.ini config/ && cp ../static/index.html static/ && tar -zcf ${APP}-linux_arm64.tar.gz ${APP} config/ static/ && rm -rf ${APP} config/ static/ && cd ../
