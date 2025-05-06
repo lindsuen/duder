@@ -1,12 +1,12 @@
 FROM debian:bookworm-slim
 
-WORKDIR /usr/local/duder
+WORKDIR /usr/local/duder-server
 
-RUN set -e && mkdir {config,static}
+RUN set -e && mkdir config static
 
 COPY ./bin/duder ./
 
-COPY ./config/config.ini ./config/
+COPY ./config/duder.conf ./config/
 
 COPY ./static/index.html ./static/
 

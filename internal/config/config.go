@@ -28,7 +28,7 @@ type ServerConfig struct {
 }
 
 func InitServerConfig() {
-	Config, err = parseInitFile("config/config.ini")
+	Config, err = parseInitFile("config/duder.conf")
 	if err != nil {
 		log.Fatalln(err)
 	}

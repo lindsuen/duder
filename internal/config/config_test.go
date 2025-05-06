@@ -12,7 +12,7 @@ import (
 )
 
 func TestParseIni(t *testing.T) {
-	cfg, err := parseInitFile("../../config/config.ini")
+	cfg, err := parseInitFile("../../config/duder.conf")
 	if err != nil {
 		fmt.Println(err)
 	}
