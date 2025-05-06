@@ -39,7 +39,7 @@ $ docker build --no-cache -t duder-server:latest .
 ```
 
 ```sh
-$ docker run -p 5363:5363 --name duder-server -v ${TARGET_DIR}/data:/usr/local/duder/data -v ${TARGET_DIR}/upload:/usr/local/duder/upload -d duder-server:latest
+$ docker run -p 5363:5363 --name duder-server -v ${TARGET_DIR}/data:/usr/local/duder-server/data -v ${TARGET_DIR}/upload:/usr/local/duder-server/upload -d duder-server:latest
 ```
 
 ## License
