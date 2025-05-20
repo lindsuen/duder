@@ -33,8 +33,8 @@ func NewServer() *Server {
 	return s
 }
 
-// ServerStart can start the Duder server.
-func ServerStart() error {
+// Start can start the Duder server.
+func Start() error {
 	serv := NewServer()
 	inst := serv.Instance
 	addr := serv.ListenAddress

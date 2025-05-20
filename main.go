@@ -14,7 +14,7 @@ import (
 
 // It's the startup portal for Duder server.
 func main() {
-	err := s.ServerStart()
+	err := s.Start()
 	if err != nil {
 		log.Fatalln(err)
 	}
