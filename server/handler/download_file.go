@@ -15,7 +15,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/lindsuen/duder/internal/db"
-	"github.com/lindsuen/duder/server/core"
+	duder "github.com/lindsuen/duder/server/core"
 )
 
 type DwonloadResponse struct {
@@ -28,7 +28,7 @@ func DownloadFile(c echo.Context) error {
 	downloadResponse.Success = true
 	downloadResponse.Message = ""
 
-	file := new(core.File)
+	file := new(duder.File)
 	fileId := c.QueryParam("fileid")
 
 	encodeValue := string(db.Get([]byte(fileId)))

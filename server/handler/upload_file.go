@@ -8,6 +8,7 @@ package handler
 
 import (
 	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -21,12 +22,11 @@ import (
 	"github.com/labstack/echo/v4"
 	cfg "github.com/lindsuen/duder/internal/config"
 	"github.com/lindsuen/duder/internal/db"
-	"github.com/lindsuen/duder/server/core"
+	duder "github.com/lindsuen/duder/server/core"
 )
 
 type UploadResponse struct {
-	Success bool       `json:"success"`
-	Message []FileInfo `json:"message"`
+	FileList []FileInfo `json:"list"`
 }
 
 type FileInfo struct {
@@ -40,9 +40,7 @@ type FileInfo struct {
 
 func UploadFile(c echo.Context) error {
 	response := new(UploadResponse)
-	response.Success = true
-	response.Message = []FileInfo{}
-	fileInfo := new(FileInfo)
+	response.FileList = []FileInfo{}
 
 	form, err := c.MultipartForm()
 	if err != nil {
@@ -51,6 +49,7 @@ func UploadFile(c echo.Context) error {
 
 	formFiles := form.File["files"]
 	for _, fileHeader := range formFiles {
+		fileInfo := new(FileInfo)
 		multiFile, err := fileHeader.Open()
 		if err != nil {
 			return err
@@ -64,38 +63,39 @@ func UploadFile(c echo.Context) error {
 			continue
 		}
 
-		coreFile := new(core.File)
-		coreFile.SetFileID()
-		coreFile.SetFileName(fileName)
-		coreFile.SetFileSize(fileSize)
-		coreFile.SetFileCreatedTime()
+		dFile := new(duder.File)
+		dFile.SetFileID()
+		dFile.SetFileName(fileName)
+		dFile.SetFileSize(fileSize)
+		dFile.SetFileCreatedTime()
 
-		storagePath := createDateDir(cfg.Config.StoragePath) + "/" + setLocalFileName(fileName, coreFile.CreatedTime)
+		storagePath := createDateDir(cfg.Config.StoragePath) + "/" + setLocalFileName(fileName, dFile.CreatedTime)
 		file, err := os.Create(storagePath)
-		if err != nil {
-			log.Println(err)
-		}
-		defer file.Close()
-
-		_, err = io.Copy(file, multiFile)
 		if err != nil {
 			return err
 		}
-		coreFile.SetFilePath(storagePath)
-		coreFile.SetFileHash(file)
+		defer file.Close()
 
-		fileInfo.ID = coreFile.ID
-		fileInfo.Name = coreFile.Name
-		fileInfo.Size = coreFile.Size
-		fileInfo.Path = coreFile.Path
-		fileInfo.CreatedTime = coreFile.CreatedTime
-		fileInfo.Hash = coreFile.Hash
+		hash := sha256.New()
+		_, err = io.Copy(file, io.TeeReader(multiFile, hash))
+		if err != nil {
+			return err
+		}
+		dFile.SetFilePath(storagePath)
+		dFile.SetFileHash(fmt.Sprintf("%x", hash.Sum(nil)))
+
+		fileInfo.ID = dFile.ID
+		fileInfo.Name = dFile.Name
+		fileInfo.Size = dFile.Size
+		fileInfo.Path = dFile.Path
+		fileInfo.CreatedTime = dFile.CreatedTime
+		fileInfo.Hash = dFile.Hash
 
 		key := []byte(fileInfo.ID)
 		value, _ := json.Marshal(fileInfo)
 		db.Set(key, []byte(base64.RawURLEncoding.EncodeToString(value)))
 
-		response.Message = append(response.Message, *fileInfo)
+		response.FileList = append(response.FileList, *fileInfo)
 	}
 	return c.JSON(http.StatusOK, &response)
 }

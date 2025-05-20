@@ -7,12 +7,7 @@
 package core
 
 import (
-	"crypto/sha256"
 	"encoding/base64"
-	"fmt"
-	"io"
-	"log"
-	"os"
 	"time"
 
 	"github.com/google/uuid"
@@ -27,31 +22,26 @@ type File struct {
 	Hash        string // sha256
 }
 
-func (d *File) SetFileID() {
-	d.ID = base64.RawURLEncoding.EncodeToString([]byte(uuid.New().String()))
+func (f *File) SetFileID() {
+	f.ID = base64.RawURLEncoding.EncodeToString([]byte(uuid.New().String()))
 }
 
-func (d *File) SetFileName(n string) {
-	d.Name = n
+func (f *File) SetFileName(s string) {
+	f.Name = s
 }
 
-func (d *File) SetFileSize(s int64) {
-	d.Size = s
+func (f *File) SetFileSize(i int64) {
+	f.Size = i
 }
 
-func (d *File) SetFilePath(p string) {
-	d.Path = p
+func (f *File) SetFilePath(s string) {
+	f.Path = s
 }
 
-func (d *File) SetFileCreatedTime() {
-	d.CreatedTime = time.Now().UnixMilli()
+func (f *File) SetFileCreatedTime() {
+	f.CreatedTime = time.Now().UnixMilli()
 }
 
-func (d *File) SetFileHash(f *os.File) {
-	hash := sha256.New()
-	_, err := io.Copy(hash, f)
-	if err != nil {
-		log.Println(err)
-	}
-	d.Hash = fmt.Sprintf("%x", hash.Sum(nil))
+func (f *File) SetFileHash(s string) {
+	f.Hash = s
 }
